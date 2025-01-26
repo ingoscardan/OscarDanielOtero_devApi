@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OscarDanielOtero_dev.Api", "OscarDanielOtero_dev.Api\OscarDanielOtero_dev.Api.csproj", "{5AE59B6C-4356-4482-A861-1CD46EC291CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{93C35D4B-E111-433F-AD33-FCFAB81F3E10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirestoreInfrastructureServices", "FirestoreInfrastructureServices\FirestoreInfrastructureServices.csproj", "{252B4B54-99B1-4400-B010-138E19006381}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{5AE59B6C-4356-4482-A861-1CD46EC291CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AE59B6C-4356-4482-A861-1CD46EC291CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AE59B6C-4356-4482-A861-1CD46EC291CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93C35D4B-E111-433F-AD33-FCFAB81F3E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93C35D4B-E111-433F-AD33-FCFAB81F3E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93C35D4B-E111-433F-AD33-FCFAB81F3E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93C35D4B-E111-433F-AD33-FCFAB81F3E10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{252B4B54-99B1-4400-B010-138E19006381}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{252B4B54-99B1-4400-B010-138E19006381}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{252B4B54-99B1-4400-B010-138E19006381}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{252B4B54-99B1-4400-B010-138E19006381}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
