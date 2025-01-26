@@ -1,0 +1,6 @@
+@OscarDanielOtero_dev.Api_HostAddress = http://localhost:5130
+
+GET {{OscarDanielOtero_dev.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
