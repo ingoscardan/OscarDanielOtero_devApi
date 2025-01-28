@@ -7,4 +7,7 @@ public interface ICollection<TModel> where TModel : FirestoreDocument
     Task<TModel> AddDocument(TModel newDocument);
     Task UpdateDocument(Guid documentId, IDictionary<string, object> updates);
     Task DeleteDocument(Guid documentId);
+
+    Task<IEnumerable<TModel>> GetAll();
+    Task<TModel> GetById(Guid documentId);
 }

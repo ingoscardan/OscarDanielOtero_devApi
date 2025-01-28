@@ -15,4 +15,9 @@
       <Folder Include="Endpoints\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BusinessLogicServices\BusinessLogicServices.csproj" />
+      <ProjectReference Include="..\Models\Models.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -6,14 +6,12 @@ namespace FirestoreInfrastructureServices.Collections;
 public abstract class Collection<TModel> : ICollection<TModel> where TModel : FirestoreDocument
 {
     protected readonly FirestoreDb FirestoreDb;
-    private readonly string _collectionName;
     protected readonly CollectionReference CollectionReference;
 
     protected Collection(FirestoreDb firestoreDb,string collectionName)
     {
         FirestoreDb = firestoreDb;
-        _collectionName = collectionName;
-        CollectionReference = FirestoreDb.Collection(_collectionName);
+        CollectionReference = FirestoreDb.Collection(collectionName);
     }
 
     public virtual async Task<TModel> AddDocument(TModel newDocument)
@@ -33,5 +31,15 @@ public abstract class Collection<TModel> : ICollection<TModel> where TModel : Fi
     {
         var documentReference = CollectionReference.Document(documentId.ToString());
         await documentReference.DeleteAsync();
+    }
+
+    public Task<IEnumerable<TModel>> GetAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<TModel> GetById(Guid documentId)
+    {
+        throw new NotImplementedException();
     }
 }
