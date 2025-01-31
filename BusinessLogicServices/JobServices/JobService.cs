@@ -1,0 +1,81 @@
+using FirestoreInfrastructureServices.Collections;
+using Models.Documents.Profile;
+
+namespace BusinessLogicServices.JobServices;
+
+public class JobService : IJobService
+{
+    private readonly IWorkExperienceCollectionQueries _workExperienceCollection;
+    
+    public JobService(IWorkExperienceCollectionQueries workExperienceCollection)
+    {
+        _workExperienceCollection = workExperienceCollection;
+    }
+    
+    
+    /// <summary>
+    /// Adds a new Job into the work experience
+    /// </summary>
+    /// <param name="newJob"></param>
+    /// <returns></returns>
+    public async Task<JobDocument> AddJob(JobDocument newJob)
+    {
+        newJob.DocumentId = Guid.NewGuid();
+        var workExperienceTimeLine = await _workExperienceCollection.GetWorkExperienceTimeLineAsync();
+        
+        // If there is nothing in work experience add it
+        var experienceTimeLine = workExperienceTimeLine as JobDocument[] ?? workExperienceTimeLine.ToArray();
+        if (!experienceTimeLine.Any())
+        {
+            await _workExperienceCollection.AddDocument(newJob);
+            return newJob;
+        }
+
+        // Validate job
+        ValidateJob(newJob, experienceTimeLine);
+        
+        // Add Job into the work experience list
+        await _workExperienceCollection.AddDocument(newJob);
+        
+        return newJob;
+    }
+
+    
+    /// <summary>
+    /// Validates:
+    /// <list type="bullet">
+    /// <item>
+    /// <description>The new job don't overlap with any other job</description>
+    /// </item>
+    /// <item>
+    /// <description>If new job is current job vValidate there is no current job</description>
+    /// </item>
+    /// <item>
+    /// <description>If new job is not current job, then validates it has an end date</description>
+    /// </item>
+    /// </list>
+    /// </summary>
+    /// <param name="job">The new job to be added</param>
+    /// <param name="workExperience">The list of jobs to validate against</param>
+    /// <exception cref="ArgumentException"></exception>
+    private static void ValidateJob(JobDocument job, IEnumerable<JobDocument> workExperience)
+    {
+        var jobDocuments = workExperience as JobDocument[] ?? workExperience.ToArray();
+        
+        if (job.IsCurrentJob)
+        {
+            if(jobDocuments.Any(j => j.IsCurrentJob))
+                throw new ArgumentException("There is already a current job. To maintain your data consistent first terminate your current job.");
+        }
+        else if (job.EndedOn == null)
+        {
+            throw new ArgumentException("Only current job has no end date.");
+        }
+        
+        if (jobDocuments.Any(j => (j.EndedOn != null && j.EndedOn > job.StartedOn) || (job.EndedOn != null && j.StartedOn < job.EndedOn)))
+        {
+            throw new ArgumentException("The job is overlapping with another jobs.");
+        }
+    }
+    
+}
