@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FirestoreInfrastructureServices\FirestoreInfrastructureServices.csproj" />
       <ProjectReference Include="..\Models\Models.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="JobServices\" />
       <Folder Include="ProfileServices\" />
     </ItemGroup>
 
