@@ -1,10 +1,22 @@
+using BusinessLogicServices;
+using BusinessLogicServices.JobServices;
+using FirestoreInfrastructureServices;
+using Microsoft.AspNetCore.Mvc;
+using Models.Documents.Profile;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddFirestoreDb(builder.Configuration.GetConnectionString("FirestoreDbProjectId"));
+
+// Add firestore
+await builder.Services.AddFirestoreCollectionServices(builder.Configuration.GetConnectionString("FirestoreDbProjectId")!, builder.Environment.IsDevelopment());
+
+// Add Business Logic Services
+builder.Services.AddJobServices();
+
 
 var app = builder.Build();
 
@@ -17,29 +29,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
+app.MapPost("/addJob", async ([FromServices]IJobService service, [FromBody] JobDocument newJob) => await service.AddJob(newJob))
+    .WithName("AddJob")
     .WithOpenApi();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

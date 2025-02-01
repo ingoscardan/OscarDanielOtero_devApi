@@ -36,7 +36,7 @@ public class JobServiceTest
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(Guid.Empty, result.DocumentId);
+        Assert.AreNotEqual(string.Empty, result.DocumentId);
         _workExperienceCollectionMock.Verify(x => x.AddDocument(It.IsAny<JobDocument>()), Times.Once);
     }
 
@@ -49,7 +49,7 @@ public class JobServiceTest
             JobTitle = "Software Engineer",
             CompanyName = "Example Company",
             StartedOn = new DateTime(2022, 1, 1),
-            DocumentId = Guid.NewGuid()
+            DocumentId = Guid.NewGuid().ToString()
         };
 
         var newJob = new JobDocument
@@ -68,7 +68,7 @@ public class JobServiceTest
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(Guid.Empty, result.DocumentId);
+        Assert.AreNotEqual(string.Empty, result.DocumentId);
         _workExperienceCollectionMock.Verify(x => x.AddDocument(It.IsAny<JobDocument>()), Times.Once);
 
     }
@@ -82,7 +82,7 @@ public class JobServiceTest
             JobTitle = "Software Engineer",
             CompanyName = "Example Company",
             StartedOn = new DateTime(2022, 1, 1),
-            DocumentId = Guid.NewGuid(),
+            DocumentId = Guid.NewGuid().ToString(),
             IsCurrentJob = true
         };
 
@@ -91,7 +91,7 @@ public class JobServiceTest
             JobTitle = "Software Engineer",
             CompanyName = "Example Company",
             StartedOn = new DateTime(2022, 1, 1),
-            DocumentId = Guid.NewGuid(),
+            DocumentId = Guid.NewGuid().ToString(),
             IsCurrentJob = false
         };
 
@@ -112,7 +112,7 @@ public class JobServiceTest
             JobTitle = "Software Engineer",
             CompanyName = "Example Company",
             StartedOn = new DateTime(2022, 1, 1),
-            DocumentId = Guid.NewGuid(),
+            DocumentId = Guid.NewGuid().ToString(),
             IsCurrentJob = true
         };
 
@@ -121,7 +121,7 @@ public class JobServiceTest
             JobTitle = "Software Engineer",
             CompanyName = "Example Company",
             StartedOn = new DateTime(2022, 1, 1),
-            DocumentId = Guid.NewGuid(),
+            DocumentId = Guid.NewGuid().ToString(),
             IsCurrentJob = true
         };
 
@@ -138,7 +138,6 @@ public class JobServiceTest
     [TestCase("2023-12-31","2024-03-01")]
     [TestCase("2020-12-01","2021-07-01")]
     [TestCase("2020-12-01","2023-07-01")]
-    [TestCase("2020-02-01","2020-07-01")]
     public Task AddJob_InvalidJob_ThrowsException_OverlappingJobs(DateTime startDate, DateTime endDate)
     {
         // Arrange
@@ -151,7 +150,7 @@ public class JobServiceTest
             StartedOn = startDate,
             EndedOn = endDate,
             IsCurrentJob = false,
-            DocumentId = Guid.NewGuid()
+            DocumentId = Guid.NewGuid().ToString()
         };
         
         _workExperienceCollectionMock.Setup(x => x.GetWorkExperienceTimeLineAsync(CancellationToken.None))
@@ -174,7 +173,7 @@ public class JobServiceTest
             StartedOn = new DateTime(2021, 1, 1),
             EndedOn = new DateTime(2021, 6, 30),
             IsCurrentJob = false,
-            DocumentId = Guid.NewGuid()
+            DocumentId = Guid.NewGuid().ToString()
         });
 
         // Second Job (Past, Non-Current)
@@ -185,7 +184,7 @@ public class JobServiceTest
             StartedOn = new DateTime(2021, 7, 1),
             EndedOn = new DateTime(2023, 12, 31),
             IsCurrentJob = false,
-            DocumentId = Guid.NewGuid()
+            DocumentId = Guid.NewGuid().ToString()
 
         });
 
@@ -196,7 +195,7 @@ public class JobServiceTest
             CompanyName = "Gamma Dynamics",
             StartedOn = new DateTime(2024, 1, 1),
             IsCurrentJob = true,  // Only the last job is current
-            DocumentId = Guid.NewGuid()
+            DocumentId = Guid.NewGuid().ToString()
         });
 
         return jobs;
