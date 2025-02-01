@@ -16,8 +16,7 @@ public abstract class Collection<TModel> : ICollection<TModel> where TModel : Fi
 
     public virtual async Task<TModel> AddDocument(TModel newDocument)
     {
-        newDocument.DocumentId = Guid.NewGuid();
-        await CollectionSet.AddAsync(newDocument);
+        await CollectionSet.Document(newDocument.DocumentId).SetAsync(newDocument);
         return newDocument;
     }
 

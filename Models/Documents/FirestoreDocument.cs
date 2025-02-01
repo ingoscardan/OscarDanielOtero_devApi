@@ -6,7 +6,7 @@ namespace Models.Documents;
 public abstract class FirestoreDocument
 {
     [FirestoreDocumentId]
-    public Guid DocumentId { get; set; }
+    public string DocumentId { get; set; }
 
     [FirestoreDocumentCreateTimestamp]
     public Timestamp CreateTime { get; set; }

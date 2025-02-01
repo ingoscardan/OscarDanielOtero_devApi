@@ -20,7 +20,7 @@ public class JobService : IJobService
     /// <returns></returns>
     public async Task<JobDocument> AddJob(JobDocument newJob)
     {
-        newJob.DocumentId = Guid.NewGuid();
+        newJob.DocumentId = Guid.NewGuid().ToString();
         var workExperienceTimeLine = await _workExperienceCollection.GetWorkExperienceTimeLineAsync();
         
         // If there is nothing in work experience add it
@@ -72,9 +72,10 @@ public class JobService : IJobService
             throw new ArgumentException("Only current job has no end date.");
         }
         
-        if (jobDocuments.Any(j => (j.EndedOn != null && j.EndedOn > job.StartedOn) || (job.EndedOn != null && j.StartedOn < job.EndedOn)))
+        var jobsSegment = jobDocuments.Where(j => job.StartedOn < j.EndedOn || j.EndedOn == null);
+        if (jobsSegment.Any(j => job.EndedOn > j.StartedOn))  // Correct overlap condition
         {
-            throw new ArgumentException("The job is overlapping with another jobs.");
+            throw new ArgumentException("New job overlaps with existing job"); // More informative message
         }
     }
     
