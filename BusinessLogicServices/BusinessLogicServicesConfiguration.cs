@@ -7,6 +7,6 @@ public static class BusinessLogicServicesConfiguration
 {
     public static void AddJobServices(this IServiceCollection services)
     {
-        services.AddScoped<IJobService, JobService>();
+        services.AddScoped<IJobService, JobCommandsService>();
     }
 }

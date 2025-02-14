@@ -3,11 +3,11 @@ using Models.Documents.Profile;
 
 namespace BusinessLogicServices.JobServices;
 
-public class JobService : IJobService
+public class JobCommandsService : IJobService
 {
     private readonly IWorkExperienceFirestoreCollectionQueries _workExperienceFirestoreCollection;
     
-    public JobService(IWorkExperienceFirestoreCollectionQueries workExperienceFirestoreCollection)
+    public JobCommandsService(IWorkExperienceFirestoreCollectionQueries workExperienceFirestoreCollection)
     {
         _workExperienceFirestoreCollection = workExperienceFirestoreCollection;
     }
