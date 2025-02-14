@@ -57,6 +57,24 @@ public class UpdateJobServiceTest
 
         return Task.CompletedTask;
     }
+    
+    [Test]
+    public Task UpdateJob_SetCurrentJobWhenCurrentJobExist_ThrowsException()
+    {
+        // Arrange
+        var workExperienceList = JobServiceUsr.CreateNonOverlappingJobs();
+        _workExperienceCollectionMock.Setup(x => x.GetWorkExperienceTimeLineAsync(CancellationToken.None))
+            .ReturnsAsync(workExperienceList);
+
+        var jobUpdates = workExperienceList.FirstOrDefault(j => !j.IsCurrentJob);
+        if (jobUpdates != null)
+        {
+            jobUpdates.IsCurrentJob = true;
+            Assert.ThrowsAsync<ArgumentException>(async () => await _jobCommandsService.UpdateJob(jobUpdates));
+        }
+
+        return Task.CompletedTask;
+    }
 
     [Test]
     public Task UpdateJob_NonExistingJobs_ThrowsException()
