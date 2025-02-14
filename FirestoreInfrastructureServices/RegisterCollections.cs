@@ -11,7 +11,7 @@ public static class RegisterCollections
     {
         await AddFirestoreDb(serviceCollection, projectId, isDevelopment);
         
-        serviceCollection.AddScoped<IWorkExperienceCollectionQueries, WorkExperienceCollection>();
+        serviceCollection.AddScoped<IWorkExperienceFirestoreCollectionQueries, WorkExperienceFirestoreCollection>();
     }
 
     private static async Task AddFirestoreDb(this IServiceCollection serviceCollection, string projectId, bool isDevelopment)

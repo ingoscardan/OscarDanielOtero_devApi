@@ -11,6 +11,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(
+            policy =>
+            {
+                policy.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .SetIsOriginAllowed(_ => true)
+                    .AllowCredentials();
+            });
+    });
+}
+
 // Add firestore
 await builder.Services.AddFirestoreCollectionServices(builder.Configuration.GetConnectionString("FirestoreDbProjectId")!, builder.Environment.IsDevelopment());
 
@@ -29,8 +44,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.MapPost("/addJob", async ([FromServices]IJobService service, [FromBody] JobDocument newJob) => await service.AddJob(newJob))
     .WithName("AddJob")
+    .WithOpenApi();
+
+app.MapPut("/updateJob",
+        async ([FromServices] IJobService service, [FromBody] JobDocument jobDocumentUpdates) =>
+        await service.UpdateJob(jobDocumentUpdates))
+    .WithName("UpdateJob")
+    .WithOpenApi();
+
+app.MapGet("/", (IJobService servive) => servive.GetAll())
+    .WithName("GetJobs")
     .WithOpenApi();
 
 app.Run();

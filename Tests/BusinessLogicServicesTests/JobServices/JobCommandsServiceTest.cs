@@ -6,16 +6,16 @@ using Moq;
 namespace Tests.BusinessLogicServicesTests.JobServices;
 
 [TestFixture]
-public class JobServiceTest
+public class JobCommandsServiceTest
 {
-    private Mock<IWorkExperienceCollectionQueries> _workExperienceCollectionMock;
-    private JobService _jobService;
+    private Mock<IWorkExperienceFirestoreCollectionQueries> _workExperienceCollectionMock;
+    private JobCommandsService _jobCommandsService;
 
     [SetUp]
     public void Setup()
     {
-        _workExperienceCollectionMock = new Mock<IWorkExperienceCollectionQueries>();
-        _jobService = new JobService(_workExperienceCollectionMock.Object);
+        _workExperienceCollectionMock = new Mock<IWorkExperienceFirestoreCollectionQueries>();
+        _jobCommandsService = new JobCommandsService(_workExperienceCollectionMock.Object);
     }
 
     [Test]
@@ -32,11 +32,11 @@ public class JobServiceTest
             .ReturnsAsync(Enumerable.Empty<JobDocument>());
 
         // Act
-        var result = await _jobService.AddJob(newJob);
+        var result = await _jobCommandsService.AddJob(newJob);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(string.Empty, result.DocumentId);
+        Assert.That(result.DocumentId, Is.Not.EqualTo(string.Empty));
         _workExperienceCollectionMock.Verify(x => x.AddDocument(It.IsAny<JobDocument>()), Times.Once);
     }
 
@@ -64,11 +64,11 @@ public class JobServiceTest
             .ReturnsAsync(new List<JobDocument> { existingJob });
 
         // Act
-        var result = await _jobService.AddJob(newJob);
+        var result = await _jobCommandsService.AddJob(newJob);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(string.Empty, result.DocumentId);
+        Assert.That(result.DocumentId, Is.Not.EqualTo(string.Empty));
         _workExperienceCollectionMock.Verify(x => x.AddDocument(It.IsAny<JobDocument>()), Times.Once);
 
     }
@@ -99,7 +99,7 @@ public class JobServiceTest
             .ReturnsAsync(new List<JobDocument> { existingCurrentJob });
 
         // Act
-        Assert.ThrowsAsync<ArgumentException>(async () => await _jobService.AddJob(newJob));
+        Assert.ThrowsAsync<ArgumentException>(async () => await _jobCommandsService.AddJob(newJob));
         return Task.CompletedTask;
     }
 
@@ -129,7 +129,7 @@ public class JobServiceTest
             .ReturnsAsync(new List<JobDocument> { existingCurrentJob });
 
         // Act
-        Assert.ThrowsAsync<ArgumentException>(async () => await _jobService.AddJob(newJob));
+        Assert.ThrowsAsync<ArgumentException>(async () => await _jobCommandsService.AddJob(newJob));
         return Task.CompletedTask;
     }
 
@@ -141,7 +141,7 @@ public class JobServiceTest
     public Task AddJob_InvalidJob_ThrowsException_OverlappingJobs(DateTime startDate, DateTime endDate)
     {
         // Arrange
-        var workExperienceList = CreateNonOverlappingJobs();
+        var workExperienceList = JobServiceUsr.CreateNonOverlappingJobs();
 
         var newJob = new JobDocument()
         {
@@ -157,48 +157,8 @@ public class JobServiceTest
             .ReturnsAsync(workExperienceList);
         
         // Act
-        Assert.ThrowsAsync<ArgumentException>(async () => await _jobService.AddJob(newJob));
+        Assert.ThrowsAsync<ArgumentException>(async () => await _jobCommandsService.AddJob(newJob));
         return Task.CompletedTask;
-    }
-    
-    private static List<JobDocument> CreateNonOverlappingJobs()
-    {
-        var jobs = new List<JobDocument>();
-
-        // First Job (Past, Non-Current)
-        jobs.Add(new JobDocument
-        {
-            JobTitle = "Software Engineer Intern",
-            CompanyName = "Acme Corp",
-            StartedOn = new DateTime(2021, 1, 1),
-            EndedOn = new DateTime(2021, 6, 30),
-            IsCurrentJob = false,
-            DocumentId = Guid.NewGuid().ToString()
-        });
-
-        // Second Job (Past, Non-Current)
-        jobs.Add(new JobDocument
-        {
-            JobTitle = "Junior Developer",
-            CompanyName = "Beta Solutions",
-            StartedOn = new DateTime(2021, 7, 1),
-            EndedOn = new DateTime(2023, 12, 31),
-            IsCurrentJob = false,
-            DocumentId = Guid.NewGuid().ToString()
-
-        });
-
-        // Third Job (Current)
-        jobs.Add(new JobDocument
-        {
-            JobTitle = "Senior Developer",
-            CompanyName = "Gamma Dynamics",
-            StartedOn = new DateTime(2024, 1, 1),
-            IsCurrentJob = true,  // Only the last job is current
-            DocumentId = Guid.NewGuid().ToString()
-        });
-
-        return jobs;
     }
     
 }

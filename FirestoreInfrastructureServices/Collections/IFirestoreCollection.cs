@@ -1,13 +1,14 @@
 using Models.Documents;
+using Models.Documents.Profile;
 
 namespace FirestoreInfrastructureServices.Collections;
 
-public interface ICollection<TModel> where TModel : FirestoreDocument
+public interface IFirestoreCollection<TModel> where TModel : FirestoreDocument
 {
     Task<TModel> AddDocument(TModel newDocument);
-    Task UpdateDocument(Guid documentId, IDictionary<string, object> updates);
+    Task UpdateDocument(TModel updatedDocument);
     Task DeleteDocument(Guid documentId);
 
     Task<IEnumerable<TModel>> GetAll();
-    Task<TModel> GetById(Guid documentId);
+    Task<TModel> GetById(string documentId);
 }

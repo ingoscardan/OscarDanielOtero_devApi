@@ -1,14 +1,15 @@
 using Google.Cloud.Firestore;
 using Models.Documents;
+using Models.Documents.Profile;
 
 namespace FirestoreInfrastructureServices.Collections;
 
-public abstract class Collection<TModel> : ICollection<TModel> where TModel : FirestoreDocument
+public abstract class FirestoreCollection<TModel> : IFirestoreCollection<TModel> where TModel : FirestoreDocument
 {
     protected readonly FirestoreDb FirestoreDb;
     protected readonly CollectionReference CollectionSet;
 
-    protected Collection(FirestoreDb firestoreDb,string collectionName)
+    protected FirestoreCollection(FirestoreDb firestoreDb,string collectionName)
     {
         FirestoreDb = firestoreDb;
         CollectionSet = FirestoreDb.Collection(collectionName);
@@ -20,10 +21,10 @@ public abstract class Collection<TModel> : ICollection<TModel> where TModel : Fi
         return newDocument;
     }
 
-    public async Task UpdateDocument(Guid documentId, IDictionary<string, object> updates)
+    public async Task UpdateDocument(TModel updatedDocument)
     {
-        var documentReference = CollectionSet.Document(documentId.ToString());
-        await documentReference.UpdateAsync(updates);
+        var documentReference = CollectionSet.Document(updatedDocument.DocumentId);
+        await documentReference.SetAsync(updatedDocument);
     }
 
     public virtual async Task DeleteDocument(Guid documentId)
@@ -37,7 +38,7 @@ public abstract class Collection<TModel> : ICollection<TModel> where TModel : Fi
         throw new NotImplementedException();
     }
 
-    public Task<TModel> GetById(Guid documentId)
+    public Task<TModel> GetById(string documentId)
     {
         throw new NotImplementedException();
     }

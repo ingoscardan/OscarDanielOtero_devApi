@@ -3,9 +3,9 @@ using Models.Documents.Profile;
 
 namespace FirestoreInfrastructureServices.Collections;
 
-public class WorkExperienceCollection : Collection<JobDocument>, IWorkExperienceCollectionQueries
+public class WorkExperienceFirestoreCollection : FirestoreCollection<JobDocument>, IWorkExperienceFirestoreCollectionQueries
 {
-    public WorkExperienceCollection(FirestoreDb firestoreDb) : base(firestoreDb, "work-experience")
+    public WorkExperienceFirestoreCollection(FirestoreDb firestoreDb) : base(firestoreDb, "work-experience")
     {
     }
 
