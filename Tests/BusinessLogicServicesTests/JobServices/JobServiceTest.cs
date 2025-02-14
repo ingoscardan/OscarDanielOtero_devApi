@@ -8,13 +8,13 @@ namespace Tests.BusinessLogicServicesTests.JobServices;
 [TestFixture]
 public class JobServiceTest
 {
-    private Mock<IWorkExperienceCollectionQueries> _workExperienceCollectionMock;
+    private Mock<IWorkExperienceFirestoreCollectionQueries> _workExperienceCollectionMock;
     private JobService _jobService;
 
     [SetUp]
     public void Setup()
     {
-        _workExperienceCollectionMock = new Mock<IWorkExperienceCollectionQueries>();
+        _workExperienceCollectionMock = new Mock<IWorkExperienceFirestoreCollectionQueries>();
         _jobService = new JobService(_workExperienceCollectionMock.Object);
     }
 
@@ -36,7 +36,7 @@ public class JobServiceTest
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(string.Empty, result.DocumentId);
+        Assert.That(result.DocumentId, Is.Not.EqualTo(string.Empty));
         _workExperienceCollectionMock.Verify(x => x.AddDocument(It.IsAny<JobDocument>()), Times.Once);
     }
 
@@ -68,7 +68,7 @@ public class JobServiceTest
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreNotEqual(string.Empty, result.DocumentId);
+        Assert.That(result.DocumentId, Is.Not.EqualTo(string.Empty));
         _workExperienceCollectionMock.Verify(x => x.AddDocument(It.IsAny<JobDocument>()), Times.Once);
 
     }

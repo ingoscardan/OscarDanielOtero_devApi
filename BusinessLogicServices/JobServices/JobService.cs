@@ -5,11 +5,11 @@ namespace BusinessLogicServices.JobServices;
 
 public class JobService : IJobService
 {
-    private readonly IWorkExperienceCollectionQueries _workExperienceCollection;
+    private readonly IWorkExperienceFirestoreCollectionQueries _workExperienceFirestoreCollection;
     
-    public JobService(IWorkExperienceCollectionQueries workExperienceCollection)
+    public JobService(IWorkExperienceFirestoreCollectionQueries workExperienceFirestoreCollection)
     {
-        _workExperienceCollection = workExperienceCollection;
+        _workExperienceFirestoreCollection = workExperienceFirestoreCollection;
     }
     
     
@@ -21,13 +21,13 @@ public class JobService : IJobService
     public async Task<JobDocument> AddJob(JobDocument newJob)
     {
         newJob.DocumentId = Guid.NewGuid().ToString();
-        var workExperienceTimeLine = await _workExperienceCollection.GetWorkExperienceTimeLineAsync();
+        var workExperienceTimeLine = await _workExperienceFirestoreCollection.GetWorkExperienceTimeLineAsync();
         
         // If there is nothing in work experience add it
         var experienceTimeLine = workExperienceTimeLine as JobDocument[] ?? workExperienceTimeLine.ToArray();
         if (!experienceTimeLine.Any())
         {
-            await _workExperienceCollection.AddDocument(newJob);
+            await _workExperienceFirestoreCollection.AddDocument(newJob);
             return newJob;
         }
 
@@ -35,12 +35,32 @@ public class JobService : IJobService
         ValidateJob(newJob, experienceTimeLine);
         
         // Add Job into the work experience list
-        await _workExperienceCollection.AddDocument(newJob);
+        await _workExperienceFirestoreCollection.AddDocument(newJob);
         
         return newJob;
     }
 
-    
+    /// <summary>
+    /// Overrides an existing job.
+    /// </summary>
+    /// <param name="jobDocumentUpdates"></param>
+    public async Task UpdateJob(JobDocument jobDocumentUpdates)
+    {
+        var timeLineWorkExperience = 
+            (await _workExperienceFirestoreCollection.GetWorkExperienceTimeLineAsync())
+            .Where(j => j.DocumentId != jobDocumentUpdates.DocumentId);
+        
+        ValidateJob(jobDocumentUpdates, timeLineWorkExperience);
+        
+        await _workExperienceFirestoreCollection.UpdateDocument(jobDocumentUpdates);
+    }
+
+    public async Task<IEnumerable<JobDocument>> GetAll()
+    {
+        return await _workExperienceFirestoreCollection.GetWorkExperienceTimeLineAsync();
+    }
+
+
     /// <summary>
     /// Validates:
     /// <list type="bullet">
